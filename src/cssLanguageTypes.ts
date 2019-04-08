@@ -93,7 +93,12 @@ export interface DocumentContext {
 	resolveReference(ref: string, base?: string): string;
 }
 
+export interface FileSystemProvider {
+	exists(path: string): Promise<boolean>;
+}
+
 export interface LanguageServiceOptions {
+	fileSystemProvider?: FileSystemProvider;
 	customDataProviders?: ICSSDataProvider[];
 }
 

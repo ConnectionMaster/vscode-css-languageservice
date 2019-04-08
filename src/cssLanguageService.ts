@@ -5,8 +5,24 @@
 'use strict';
 
 import {
-	TextDocument, Position, CompletionList, Hover, Range, SymbolInformation, Diagnostic, Location, DocumentHighlight,
-	CodeActionContext, Command, WorkspaceEdit, Color, ColorInformation, ColorPresentation, FoldingRange, CodeAction, DocumentLink
+	TextDocument,
+	Position,
+	CompletionList,
+	Hover,
+	Range,
+	SymbolInformation,
+	Diagnostic,
+	Location,
+	DocumentHighlight,
+	CodeActionContext,
+	Command,
+	WorkspaceEdit,
+	Color,
+	ColorInformation,
+	ColorPresentation,
+	FoldingRange,
+	CodeAction,
+	DocumentLink
 } from 'vscode-languageserver-types';
 
 import { Parser } from './parser/cssParser';
@@ -21,7 +37,13 @@ import { SCSSCompletion } from './services/scssCompletion';
 import { LESSParser } from './parser/lessParser';
 import { LESSCompletion } from './services/lessCompletion';
 import { getFoldingRanges } from './services/cssFolding';
-import { LanguageSettings, ICompletionParticipant, DocumentContext, LanguageServiceOptions, SelectionRange } from './cssLanguageTypes';
+import {
+	LanguageSettings,
+	ICompletionParticipant,
+	DocumentContext,
+	LanguageServiceOptions,
+	SelectionRange
+} from './cssLanguageTypes';
 import { cssDataManager } from './languageFacts/facts';
 import { getSelectionRanges } from './services/cssSelectionRange';
 
@@ -42,21 +64,38 @@ export interface LanguageService {
 	findDocumentLinks(document: TextDocument, stylesheet: Stylesheet, documentContext: DocumentContext): DocumentLink[];
 	findDocumentSymbols(document: TextDocument, stylesheet: Stylesheet): SymbolInformation[];
 	doCodeActions(document: TextDocument, range: Range, context: CodeActionContext, stylesheet: Stylesheet): Command[];
-	doCodeActions2(document: TextDocument, range: Range, context: CodeActionContext, stylesheet: Stylesheet): CodeAction[];
+	doCodeActions2(
+		document: TextDocument,
+		range: Range,
+		context: CodeActionContext,
+		stylesheet: Stylesheet
+	): CodeAction[];
 	/**
 	 * @deprecated use findDocumentColors instead
 	 */
 	findColorSymbols(document: TextDocument, stylesheet: Stylesheet): Range[];
 	findDocumentColors(document: TextDocument, stylesheet: Stylesheet): ColorInformation[];
-	getColorPresentations(document: TextDocument, stylesheet: Stylesheet, color: Color, range: Range): ColorPresentation[];
+	getColorPresentations(
+		document: TextDocument,
+		stylesheet: Stylesheet,
+		color: Color,
+		range: Range
+	): ColorPresentation[];
 	doRename(document: TextDocument, position: Position, newName: string, stylesheet: Stylesheet): WorkspaceEdit;
-	getFoldingRanges(document: TextDocument, context?: { rangeLimit?: number; }): FoldingRange[];
+	getFoldingRanges(document: TextDocument, context?: { rangeLimit?: number }): FoldingRange[];
 	getSelectionRanges(document: TextDocument, positions: Position[], stylesheet: Stylesheet): SelectionRange[][];
 }
 
-function createFacade(parser: Parser, completion: CSSCompletion, hover: CSSHover, navigation: CSSNavigation, codeActions: CSSCodeActions, validation: CSSValidation) {
+function createFacade(
+	parser: Parser,
+	completion: CSSCompletion,
+	hover: CSSHover,
+	navigation: CSSNavigation,
+	codeActions: CSSCodeActions,
+	validation: CSSValidation
+) {
 	return {
-		configure: (settings) => {
+		configure: settings => {
 			validation.configure(settings);
 			completion.configure(settings);
 		},
@@ -89,15 +128,36 @@ function handleCustomData(options?: LanguageServiceOptions) {
 
 export function getCSSLanguageService(options?: LanguageServiceOptions): LanguageService {
 	handleCustomData(options);
-	return createFacade(new Parser(), new CSSCompletion(), new CSSHover(), new CSSNavigation(), new CSSCodeActions(), new CSSValidation());
+	return createFacade(
+		new Parser(),
+		new CSSCompletion(),
+		new CSSHover(),
+		new CSSNavigation(),
+		new CSSCodeActions(),
+		new CSSValidation()
+	);
 }
 
 export function getSCSSLanguageService(options?: LanguageServiceOptions): LanguageService {
 	handleCustomData(options);
-	return createFacade(new SCSSParser(), new SCSSCompletion(), new CSSHover(), new CSSNavigation(), new CSSCodeActions(), new CSSValidation());
+	return createFacade(
+		new SCSSParser(),
+		new SCSSCompletion(),
+		new CSSHover(),
+		new CSSNavigation(options.fileSystemProvider),
+		new CSSCodeActions(),
+		new CSSValidation()
+	);
 }
 
 export function getLESSLanguageService(options?: LanguageServiceOptions): LanguageService {
 	handleCustomData(options);
-	return createFacade(new LESSParser(), new LESSCompletion(), new CSSHover(), new CSSNavigation(), new CSSCodeActions(), new CSSValidation());
+	return createFacade(
+		new LESSParser(),
+		new LESSCompletion(),
+		new CSSHover(),
+		new CSSNavigation(),
+		new CSSCodeActions(),
+		new CSSValidation()
+	);
 }

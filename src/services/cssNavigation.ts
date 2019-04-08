@@ -6,7 +6,7 @@
 
 import { Color, ColorInformation, ColorPresentation, DocumentHighlight, DocumentHighlightKind, DocumentLink, Location, Position, Range, SymbolInformation, SymbolKind, TextDocument, TextEdit, WorkspaceEdit } from 'vscode-languageserver-types';
 import * as nls from 'vscode-nls';
-import { DocumentContext } from '../cssLanguageTypes';
+import { DocumentContext, FileSystemProvider } from '../cssLanguageTypes';
 import * as nodes from '../parser/cssNodes';
 import { Symbols } from '../parser/cssSymbolScope';
 import { getColorValue, hslFromColor } from '../languageFacts/facts';
@@ -15,6 +15,8 @@ import { endsWith, startsWith } from '../utils/strings';
 const localize = nls.loadMessageBundle();
 
 export class CSSNavigation {
+	
+	constructor(private fileSystemProvider?: FileSystemProvider) {}
 
 	public findDefinition(document: TextDocument, position: Position, stylesheet: nodes.Node): Location | null {
 
